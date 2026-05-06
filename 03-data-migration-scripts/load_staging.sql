@@ -1,0 +1,256 @@
+-- load_staging.sql
+-- Loads extracted Parquet files into Snowflake staging tables.
+USE DATABASE ADVENTUREWORKS_MIGRATED;
+USE SCHEMA STAGING;
+
+SELECT 'Starting staging load from @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage' AS status;
+
+SELECT 'Loading STAGING.adventure_works_dw_build_version_stg from adventure_works_dw_build_version.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.adventure_works_dw_build_version_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.adventure_works_dw_build_version_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/adventure_works_dw_build_version.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.database_log_stg from database_log.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.database_log_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.database_log_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/database_log.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_account_stg from dim_account.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_account_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_account_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_account.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_currency_stg from dim_currency.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_currency_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_currency_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_currency.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_customer_stg from dim_customer.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_customer_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_customer_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_customer.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_date_stg from dim_date.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_date_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_date_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_date.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_department_group_stg from dim_department_group.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_department_group_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_department_group_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_department_group.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_employee_stg from dim_employee.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_employee_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_employee_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_employee.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_geography_stg from dim_geography.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_geography_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_geography_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_geography.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_organization_stg from dim_organization.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_organization_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_organization_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_organization.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_product_category_stg from dim_product_category.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_product_category_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_product_category_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_product_category.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_product_stg from dim_product.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_product_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_product_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_product.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_product_subcategory_stg from dim_product_subcategory.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_product_subcategory_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_product_subcategory_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_product_subcategory.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_promotion_stg from dim_promotion.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_promotion_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_promotion_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_promotion.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_reseller_stg from dim_reseller.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_reseller_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_reseller_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_reseller.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_sales_reason_stg from dim_sales_reason.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_sales_reason_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_sales_reason_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_sales_reason.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_sales_territory_stg from dim_sales_territory.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_sales_territory_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_sales_territory_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_sales_territory.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.dim_scenario_stg from dim_scenario.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.dim_scenario_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.dim_scenario_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/dim_scenario.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_additional_international_product_description_stg from fact_additional_international_product_description.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_additional_international_product_description_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_additional_international_product_description_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_additional_international_product_description.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_call_center_stg from fact_call_center.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_call_center_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_call_center_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_call_center.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_currency_rate_stg from fact_currency_rate.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_currency_rate_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_currency_rate_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_currency_rate.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_finance_stg from fact_finance.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_finance_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_finance_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_finance.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_internet_sales_reason_stg from fact_internet_sales_reason.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_internet_sales_reason_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_internet_sales_reason_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_internet_sales_reason.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_internet_sales_stg from fact_internet_sales.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_internet_sales_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_internet_sales_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_internet_sales.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_product_inventory_stg from fact_product_inventory.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_product_inventory_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_product_inventory_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_product_inventory.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_reseller_sales_stg from fact_reseller_sales.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_reseller_sales_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_reseller_sales_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_reseller_sales.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_sales_quota_stg from fact_sales_quota.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_sales_quota_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_sales_quota_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_sales_quota.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.fact_survey_response_stg from fact_survey_response.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.fact_survey_response_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.fact_survey_response_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/fact_survey_response.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.new_fact_currency_rate_stg from new_fact_currency_rate.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.new_fact_currency_rate_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.new_fact_currency_rate_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/new_fact_currency_rate.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.prospective_buyer_stg from prospective_buyer.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.prospective_buyer_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.prospective_buyer_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/prospective_buyer.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Loading STAGING.sysdiagrams_stg from sysdiagrams.parquet' AS status;
+TRUNCATE TABLE IF EXISTS ADVENTUREWORKS_MIGRATED.STAGING.sysdiagrams_stg;
+COPY INTO ADVENTUREWORKS_MIGRATED.STAGING.sysdiagrams_stg
+FROM @ADVENTUREWORKS_MIGRATED.STAGING.parquet_internal_stage/sysdiagrams.parquet
+FILE_FORMAT = (FORMAT_NAME = ADVENTUREWORKS_MIGRATED.UTILITY.ff_parquet)
+MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+ON_ERROR = 'CONTINUE';
+
+SELECT 'Completed staging load script' AS status;
