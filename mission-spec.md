@@ -109,12 +109,14 @@ Prepare the local machine so that the migration mission (Part 2) can run without
    - Map host port `1433` to container port `1433`.
    - Mount a volume for AdventureWorks database files so data persists across restarts.
    - Wait for SQL Server to be healthy (probe via `sqlcmd` or `pyodbc` connection).
+   - **Note for Apple Silicon (ARM64):** The `linux/amd64` SQL Server image will run under Rosetta emulation. Ensure Docker Desktop is configured to run x86/amd64 containers.
 
 3. **Download and Restore AdventureWorks:**
-   - Download `AdventureWorksDW2019.bak` from Microsoft's official SQL Server samples (or use a pre-bundled image if available).
+   - Download `AdventureWorksDW2022.bak` (or compatible version) from Microsoft's official SQL Server samples releases.
    - Copy `.bak` file into the container's data directory.
+   - Query logical file names via `RESTORE FILELISTONLY` to determine correct `MOVE` targets.
    - Execute `RESTORE DATABASE` T-SQL command via `sqlcmd` inside the container.
-   - Verify restore succeeded: `SELECT COUNT(*) FROM AdventureWorksDW2019.dbo.DimCustomer` (or equivalent).
+   - Verify restore succeeded: `SELECT COUNT(*) FROM AdventureWorksDW2022.dbo.DimCustomer` (or equivalent).
 
 4. **Clone Source Repositories:**
    - Clone `source_repo_url` (default: `andrescastillol/ETL-DesignSolution`) into `source/etl-repo/`.

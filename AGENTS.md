@@ -17,10 +17,14 @@ This repository automates end-to-end migration of the Microsoft AdventureWorks d
 ## Build, Test, and Development Commands
 
 - `python3 extract_data.py` — Extract data from Docker SQL Server (`localhost:1433`) into Parquet/CSV
-- `uv sync` or `uv pip install -r requirements.txt` — Install Python dependencies via UV (Streamlit, Snowflake connectors, pandas, plotly)
+- `source .venv/bin/activate` — Activate the local virtual environment
+- `uv sync` or `uv pip install -r requirements.txt` — Install Python dependencies via UV (Streamlit, Snowflake connectors, pandas, plotly, pymssql)
 - `streamlit run streamlit_app.py` — Run the generated dashboard locally
+- **Note:** On macOS, use `pymssql` instead of `pyodbc` for SQL Server connectivity, as the Microsoft ODBC driver installation is unreliable. The generated extraction scripts should use `pymssql`.
+- `jupyter notebook` — Start Jupyter for running generated notebooks
 - `make deploy` or `./deploy.sh` — Deploy generated SQL artifacts to Snowflake in dependency order
 - `docker-compose up` — Start the SQL Server + AdventureWorks container (Part 1 prerequisite)
+- `docker exec adventureworks-sql /opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P "FactoryDemo2025!" -C -Q "<SQL>"` — Execute SQL against the Docker SQL Server
 
 ## Coding Style & Naming Conventions
 
