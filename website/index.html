@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdventureWorks → Snowflake Migration | Factory AI Mission</title>
+  <meta name="description" content="End-to-end migration of AdventureWorks DW (SQL Server + SSIS + Power BI) into Snowflake using Factory AI. 1,060,820 rows migrated, 39/39 validations passed.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="nav-mark">&#10022;</span> FACTORY
+      </a>
+      <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#environment">Environment</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#data">Data</a>
+        <a href="#validation">Validation</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#execution">Execution</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">MIGRATION MISSION</div>
+      <h1 class="hero-title">AdventureWorks <span class="accent">→</span> Snowflake</h1>
+      <p class="hero-subtitle">Automated end-to-end migration of Microsoft AdventureWorks DW (SQL Server + SSIS + Power BI) into Snowflake using Snowpark Notebooks &mdash; executed in a single Droid mission.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-value">1,060,820</div>
+          <div class="stat-label">Rows Migrated</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">39<span class="stat-delim">/</span>39</div>
+          <div class="stat-label">Validations Passed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">~7h</div>
+          <div class="stat-label">Total Runtime</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">0.00%</div>
+          <div class="stat-label">Row Count Diff</div>
+        </div>
+      </div>
+      <a href="#overview" class="hero-cta">Explore the Mission</a>
+    </div>
+    <div class="hero-scroll">&#8595;</div>
+  </section>
+
+  <!-- MISSION OVERVIEW -->
+  <section class="section" id="overview">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Mission Overview</h2>
+        <p class="section-desc">What we set out to do and what the migration covered.</p>
+      </div>
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="overview-icon">&#9729;</div>
+          <h3>Source Stack</h3>
+          <p>Microsoft AdventureWorksDW2022 running in Docker SQL Server on <code>localhost:1433</code>. ETL pipelines in T-SQL + SSIS packages. Power BI sales dashboard for analytics.</p>
+        </div>
+        <div class="overview-card">
+          <div class="overview-icon">&#10052;</div>
+          <h3>Target Stack</h3>
+          <p>Snowflake cloud data warehouse with <code>ADVENTUREWORKS_MIGRATED</code> database. Three schemas: <code>STAGING</code>, <code>DW</code>, and <code>UTILITY</code>. Snowpark Notebooks as the primary ETL primitive.</p>
+        </div>
+        <div class="overview-card">
+          <div class="overview-icon">&#9881;</div>
+          <h3>Migration Strategy</h3>
+          <p>Subset-data migration scope. Code generation first, then live data extraction via <code>pymssql</code> to Parquet, upload to Snowflake internal stage, and load via <code>COPY INTO</code> + <code>MERGE</code> with SCD Type 2 tracking.</p>
+        </div>
+        <div class="overview-card">
+          <div class="overview-icon">&#128200;</div>
+          <h3>Dashboard Migration</h3>
+          <p>Dual approach: generated a Power BI repointing guide <em>and</em> a brand-new Streamlit dashboard deployed as Snowflake Native Streamlit (SiS), styled with Factory AI visual identity &mdash; dark base, warm orange accent, Geist typography.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENVIRONMENT SETUP -->
+  <section class="section section-dark" id="environment">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Environment Setup</h2>
+        <p class="section-desc">Part 1: preparing the demo machine before the migration mission begins.</p>
+      </div>
+      <div class="env-grid">
+        <div class="env-left">
+          <p class="env-lead">The mission followed a <strong>two-part execution model</strong>. Part 1 was a standalone Droid session that provisioned the environment so Part 2 (the repeatable migration mission) could run without any environment-related delays.</p>
+          <div class="env-steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <h4>Tool Installation</h4>
+                <p>Verified <code>git</code>, <code>docker</code>, <code>python3</code>, <code>uv</code>, <code>snowflake-connector-python</code>, and <code>jupyter</code>. All versions logged in <code>00-environment-setup-log.md</code>.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <h4>Docker SQL Server</h4>
+                <p>Pulled <code>mcr.microsoft.com/mssql/server:2022-latest</code> and started container on port 1433. On Apple Silicon, the linux/amd64 image runs under Rosetta emulation.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <h4>AdventureWorks Restore</h4>
+                <p>Downloaded <code>AdventureWorksDW2022.bak</code> (97.1 MB) from Microsoft samples, restored into Docker SQL Server, and verified with <code>SELECT COUNT(*) FROM DimCustomer</code> &mdash; <strong>18,484 rows</strong>.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <h4>Repository Cloning</h4>
+                <p>Cloned ETL repo <code>andrescastillol/ETL-DesignSolution</code> and dashboard repo <code>RohanParkar/AdventureWorks-Sales-Performance-Dashboard</code> into <code>source/</code>.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-body">
+                <h4>Connectivity Check</h4>
+                <p>Verified host-to-container SQL Server connection and Snowflake account <code>KLDJZPG-RTB48613</code> connectivity. Environment marked ready for Part 2.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="env-right">
+          <div class="code-panel">
+            <div class="code-header">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+              <span class="code-title">01_create_databases.sql</span>
+            </div>
+            <pre class="code-body"><code><span class="kw">CREATE WAREHOUSE</span> <span class="id">IF NOT EXISTS</span> <span class="str">ADVENTUREWORKS_ETL_WH</span>
+  <span class="kw">WITH</span> <span class="id">WAREHOUSE_SIZE</span> = <span class="lit">'XSMALL'</span>
+  <span class="id">AUTO_SUSPEND</span> = <span class="num">60</span>
+  <span class="id">AUTO_RESUME</span> = <span class="kw">TRUE</span>
+  <span class="id">INITIALLY_SUSPENDED</span> = <span class="kw">TRUE</span>;
+
+<span class="kw">CREATE WAREHOUSE</span> <span class="id">IF NOT EXISTS</span> <span class="str">ADVENTUREWORKS_BI_WH</span>
+  <span class="kw">WITH</span> <span class="id">WAREHOUSE_SIZE</span> = <span class="lit">'XSMALL'</span>
+  <span class="id">AUTO_SUSPEND</span> = <span class="num">60</span>
+  <span class="id">AUTO_RESUME</span> = <span class="kw">TRUE</span>
+  <span class="id">INITIALLY_SUSPENDED</span> = <span class="kw">TRUE</span>;
+
+<span class="kw">CREATE DATABASE</span> <span class="id">IF NOT EXISTS</span> <span class="str">ADVENTUREWORKS_MIGRATED</span>;
+
+<span class="kw">CREATE SCHEMA</span> <span class="id">IF NOT EXISTS</span> <span class="str">ADVENTUREWORKS_MIGRATED.STAGING</span>;
+<span class="kw">CREATE SCHEMA</span> <span class="id">IF NOT EXISTS</span> <span class="str">ADVENTUREWORKS_MIGRATED.DW</span>;
+<span class="kw">CREATE SCHEMA</span> <span class="id">IF NOT EXISTS</span> <span class="str">ADVENTUREWORKS_MIGRATED.UTILITY</span>;</code></pre>
+          </div>
+          <div class="env-meta">
+            <div class="meta-row">
+              <span class="meta-label">Setup Time</span>
+              <span class="meta-value">15&ndash;25 min (first run)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Docker Image</span>
+              <span class="meta-value">mssql/server:2022-latest</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">SQL Server Driver</span>
+              <span class="meta-value">pymssql (macOS ARM64)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Python</span>
+              <span class="meta-value">3.14.4 via uv</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE / GANTT -->
+  <section class="section" id="timeline">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Mission Timeline</h2>
+        <p class="section-desc">A Gantt view of the 7 milestones, from discovery to final packaging. Total runtime: ~7 hours.</p>
+      </div>
+
+      <div class="gantt-wrap">
+        <div class="gantt-chart" id="gantt-chart"></div>
+        <p class="gantt-validator-note">
+          Each milestone shows <span class="swatch worker"></span> <code>WORKER</code> (green) building artifacts,
+          followed by <span class="swatch scrutiny"></span> <code>SCRUTINY</code> (orange)
+          and <span class="swatch user"></span> <code>USER-TESTING</code> (blue) validators.
+          Rejections are hatched with red borders &mdash; workers had to fix issues before the milestone could be sealed.
+        </p>
+      </div>
+
+      <div class="milestones">
+        <h3 class="milestones-title">Milestone Breakdown</h3>
+        <div class="milestone-list">
+          <div class="milestone">
+            <div class="milestone-left">
+              <div class="milestone-badge discovery">M1</div>
+              <div class="milestone-time">~30 min</div>
+            </div>
+            <div class="milestone-body">
+              <h4>Discovery &amp; Assessment</h4>
+              <p>Parsed ETL and dashboard repositories. Built an object inventory of <strong>48 migration objects</strong> with complexity scoring (23 Simple / 16 Medium / 9 Complex). Identified all artifact types: T-SQL scripts, SSIS packages, Power BI <code>.pbix</code>, CSV tables. Produced <code>01-assessment-report.md</code>. <span class="pass">4/4 assertions passed</span>.</p>
+            </div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-left">
+              <div class="milestone-badge architecture">M2</div>
+              <div class="milestone-time">~30 min</div>
+            </div>
+            <div class="milestone-body">
+              <h4>Target Architecture Design</h4>
+              <p>Designed three-schema target layout: <code>STAGING</code> (raw), <code>DW</code> (star schema with SCD Type 2 columns <code>_valid_from</code>, <code>_valid_to</code>, <code>_is_current</code>), and <code>UTILITY</code> (procs, UDFs, validation). Mapped all 48+ source objects to Snowpark Notebook primitives. Documented SQL Server &rarr; Snowflake type mappings. <span class="pass">5/5 assertions passed</span>.</p>
+            </div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-left">
+              <div class="milestone-badge code">M3</div>
+              <div class="milestone-time">~45 min</div>
+            </div>
+            <div class="milestone-body">
+              <h4>DDL &amp; Code Generation</h4>
+              <p>Generated 5 ordered DDL scripts creating database, 31 staging tables, 28 DW tables, file formats, and internal stages. Plus UDFs, a deployment manifest, and connection templates. All scripts executed against live Snowflake with 0 compilation errors. <span class="pass">4/4 assertions passed</span>.</p>
+            </div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-left">
+              <div class="milestone-badge code">M4</div>
+              <div class="milestone-time">~60 min</div>
+            </div>
+            <div class="milestone-body">
+              <h4>Snowpark Notebooks</h4>
+              <p>Generated 3 Python notebooks: SCD Type 2 MERGE logic, data quality checks (row counts, nulls, duplicates), and staging load workflows. Also created a scheduled Snowflake Task <code>TASK_RUN_NB_DATA_QUALITY_DAILY</code> with cron <code>0 2 * * * UTC</code>, left in SUSPENDED state. All cells executed via <code>jupyter nbconvert --execute</code>. <span class="pass">4/4 assertions passed</span>.</p>
+            </div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-left">
+              <div class="milestone-badge data">M5</div>
+              <div class="milestone-time">~90 min</div>
+            </div>
+            <div class="milestone-body">
+              <h4>Data Migration</h4>
+              <p>Extracted all 31 tables from Docker SQL Server using <code>extract_data.py</code> (pymssql) into Parquet files &mdash; <strong>1,060,820 total rows</strong>. Uploaded to Snowflake internal stage via <code>PUT</code>. Loaded staging tables with <code>COPY INTO</code>, then populated DW via <code>MERGE</code> with SCD Type 2 logic. Fixed binary-column Parquet load issues by setting <code>BINARY_AS_TEXT=FALSE</code>. <span class="pass">7/7 assertions passed</span>.</p>
+            </div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-left">
+              <div class="milestone-badge dashboard">M6</div>
+              <div class="milestone-time">~60 min</div>
+            </div>
+            <div class="milestone-body">
+              <h4>Dashboard Migration</h4>
+              <p>Generated a Power BI &rarr; Snowflake repointing guide with connection-string changes and DAX rewrites. Built a new Streamlit dashboard with Factory AI styling (dark base #0A0A0A, orange accent #FF6B35, Geist font). Six visualizations querying live Snowflake: KPIs, sales trend, top products, geographic map, customer segments, and SCD Type 2 history explorer. Verified via agent-browser screenshots. <span class="pass">6/6 assertions passed</span>.</p>
+            </div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-left">
+              <div class="milestone-badge validate">M7</div>
+              <div class="milestone-time">~45 min</div>
+            </div>
+            <div class="milestone-body">
+              <h4>Validation &amp; Packaging</h4>
+              <p>Full validation suite: schema (67/67 objects), row counts (0.00% diff), checksums (all scopes PASS), SCD Type 2 integrity (102/102 checks). Streamlit dashboard verified with real migrated data. Packaged everything into <code>adventureworks-snowflake-deliverable.zip</code> (941 KB). <span class="pass">9/9 assertions passed</span>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA AT SCALE -->
+  <section class="section section-dark" id="data">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Data at Scale</h2>
+        <p class="section-desc">Volume, tables, and the zero-difference extraction pipeline.</p>
+      </div>
+      <div class="data-grid">
+        <div class="data-metric-row">
+          <div class="data-metric">
+            <div class="data-metric-value">1,060,820</div>
+            <div class="data-metric-label">Total Rows Extracted</div>
+          </div>
+          <div class="data-metric">
+            <div class="data-metric-value">31</div>
+            <div class="data-metric-label">Staging Tables</div>
+          </div>
+          <div class="data-metric">
+            <div class="data-metric-value">28</div>
+            <div class="data-metric-label">DW Tables</div>
+          </div>
+          <div class="data-metric">
+            <div class="data-metric-value">0.00%</div>
+            <div class="data-metric-label">Row Count Diff</div>
+          </div>
+        </div>
+        <div class="data-flow">
+          <div class="data-flow-title">Extraction Pipeline</div>
+          <div class="flow-diagram">
+            <div class="flow-node">
+              <div class="flow-icon">&#9729;</div>
+              <div class="flow-name">SQL Server</div>
+              <div class="flow-detail">Docker<br>localhost:1433</div>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node">
+              <div class="flow-icon">&#128223;</div>
+              <div class="flow-name">Parquet Files</div>
+              <div class="flow-detail">31 files<br>local disk</div>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node">
+              <div class="flow-icon">&#9729;</div>
+              <div class="flow-name">Snowflake Stage</div>
+              <div class="flow-detail">Internal stage<br>PUT command</div>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node">
+              <div class="flow-icon">&#10052;</div>
+              <div class="flow-name">Snowflake DW</div>
+              <div class="flow-detail">STAGING &rarr; DW<br>COPY INTO + MERGE</div>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node">
+              <div class="flow-icon">&#128218;</div>
+              <div class="flow-name">SiS Notebooks</div>
+              <div class="flow-detail">3 notebooks<br>CREATE NOTEBOOK</div>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node">
+              <div class="flow-icon">&#128200;</div>
+              <div class="flow-name">SiS Streamlit</div>
+              <div class="flow-detail">Dashboard app<br>Native Streamlit</div>
+            </div>
+          </div>
+        </div>
+        <div class="data-extract-snippet">
+          <div class="code-panel">
+            <div class="code-header">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+              <span class="code-title">extract_data.py (pymssql)</span>
+            </div>
+            <pre class="code-body"><code><span class="kw">def</span> <span class="fn">export_table</span>(connection, schema_name, table_name, output_dir):
+    query = <span class="lit">f"SELECT * FROM [{schema_name}].[{table_name}]"</span>
+    frame = pd.read_sql(query, connection)
+    output_file = output_dir / <span class="lit">f"{table_file_stem(schema_name, table_name)}.parquet"</span>
+    frame.to_parquet(output_file, index=<span class="kw">False</span>)
+    <span class="kw">return</span> <span class="fn">len</span>(frame)
+
+<span class="cmt"># Total extracted: 1,060,820 rows across 31 tables</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALIDATION & TESTING -->
+  <section class="section" id="validation">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Validation &amp; Testing</h2>
+        <p class="section-desc">How we proved the migration was correct, layer by layer.</p>
+      </div>
+      <div class="validation-grid">
+        <div class="val-card">
+          <div class="val-header">
+            <div class="val-icon">&#9636;</div>
+            <div class="val-title">Schema Validation</div>
+            <div class="val-status pass">PASS</div>
+          </div>
+          <div class="val-body">
+            <p>Verified via <code>INFORMATION_SCHEMA</code> that all expected objects exist with correct columns and types in Snowflake.</p>
+            <div class="val-metric">67<span class="val-metric-unit">/ 67 objects</span></div>
+          </div>
+        </div>
+        <div class="val-card">
+          <div class="val-header">
+            <div class="val-icon">&#9638;</div>
+            <div class="val-title">Row Count Parity</div>
+            <div class="val-status pass">PASS</div>
+          </div>
+          <div class="val-body">
+            <p>Compared row counts for every migrated table between source SQL Server and target Snowflake.</p>
+            <div class="val-metric">0.00<span class="val-metric-unit">% diff</span></div>
+          </div>
+        </div>
+        <div class="val-card">
+          <div class="val-header">
+            <div class="val-icon">&#9729;</div>
+            <div class="val-title">Checksum Validation</div>
+            <div class="val-status pass">PASS</div>
+          </div>
+          <div class="val-body">
+            <p>Computed MD5 / SUM hashes for key columns across STAGING, DW_CURRENT, and DW scopes.</p>
+            <div class="val-metric">All<span class="val-metric-unit"> scopes PASS</span></div>
+          </div>
+        </div>
+        <div class="val-card">
+          <div class="val-header">
+            <div class="val-icon">&#128200;</div>
+            <div class="val-title">SCD Type 2 Integrity</div>
+            <div class="val-status pass">PASS</div>
+          </div>
+          <div class="val-body">
+            <p>Verified one current row per business key, no gaps or overlaps in validity periods, and full source coverage.</p>
+            <div class="val-metric">102<span class="val-metric-unit">/ 102 checks</span></div>
+          </div>
+        </div>
+        <div class="val-card wide">
+          <div class="val-header">
+            <div class="val-icon">&#128187;</div>
+            <div class="val-title">Streamlit Dashboard Verification</div>
+            <div class="val-status pass">PASS</div>
+          </div>
+          <div class="val-body">
+            <p>The Streamlit app was deployed to Snowflake Native Streamlit (SiS) and validated with browser automation. Real migrated data rendered correctly:</p>
+            <div class="val-kpi-row">
+              <div class="val-kpi">
+                <span class="val-kpi-value">$29,358,677.22</span>
+                <span class="val-kpi-label">Total Sales</span>
+              </div>
+              <div class="val-kpi">
+                <span class="val-kpi-value">$12,080,883.64</span>
+                <span class="val-kpi-label">Total Profit</span>
+              </div>
+              <div class="val-kpi">
+                <span class="val-kpi-value">10.81%</span>
+                <span class="val-kpi-label">Return Rate</span>
+              </div>
+              <div class="val-kpi">
+                <span class="val-kpi-value">60,398</span>
+                <span class="val-kpi-label">Active Rows</span>
+              </div>
+            </div>
+            <p>After applying the <code>Accessories</code> filter, metrics updated correctly ($700,759.96 sales, 1.81% return rate). SCD explorer rendered timeline + history table for Product dimension.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD MIGRATION -->
+  <section class="section section-dark" id="dashboard">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2 class="section-title">Dashboard Migration</h2>
+        <p class="section-desc">From Power BI to a Snowflake-backed Streamlit dashboard with Factory AI styling.</p>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-left">
+          <h3 class="dash-subtitle">Repointing Guide</h3>
+          <p>We analyzed the Power BI <code>.pbix</code> file structure, connection strings, DAX measures, and custom SQL. Generated a step-by-step guide covering:</p>
+          <ul class="dash-list">
+            <li>Connection string changes (SQL Server &rarr; Snowflake connector)</li>
+            <li>T-SQL &rarr; Snowflake SQL dialect conversions</li>
+            <li>DAX calculated fields requiring rewrite</li>
+            <li>Schema mapping for renamed tables</li>
+          </ul>
+          <h3 class="dash-subtitle">New Streamlit Dashboard</h3>
+          <p>Built from scratch with 6 live visualizations querying Snowflake <code>ADVENTUREWORKS_MIGRATED.DW</code>:</p>
+          <div class="viz-grid">
+            <div class="viz-item"><span class="viz-num">1</span> Sales KPIs</div>
+            <div class="viz-item"><span class="viz-num">2</span> Sales Trend Line</div>
+            <div class="viz-item"><span class="viz-num">3</span> Top Products</div>
+            <div class="viz-item"><span class="viz-num">4</span> Geographic Map</div>
+            <div class="viz-item"><span class="viz-num">5</span> Customer Segments</div>
+            <div class="viz-item"><span class="viz-num">6</span> SCD Type 2 Explorer</div>
+          </div>
+          <p>Interactive filters: date range picker, product category multi-select, region multi-select.</p>
+        </div>
+        <div class="dash-right">
+          <div class="screenshot-lightbox-grid">
+            <a href="assets/images/streamlit-home-clean.png" class="lightbox-thumb" data-caption="Streamlit Home — KPIs ($29.3M sales, $12M profit, 10.81% return rate), sales trend, top products, and geographic map. All real data from Snowflake DW.">
+              <img src="assets/images/streamlit-home-clean.png" alt="Streamlit Dashboard Home">
+            </a>
+            <a href="assets/images/streamlit-home-clean.png" class="lightbox-thumb" data-caption="Sales Trend (Time Series) — monthly sales vs profit over the full date range, powered by live Snowflake queries">
+              <img src="assets/images/streamlit-home-clean.png" alt="Streamlit Sales Trend">
+            </a>
+            <a href="assets/images/streamlit-scd-clean.png" class="lightbox-thumb" data-caption="Interactive filters sidebar — date range picker, product categories multi-select, regions multi-select">
+              <img src="assets/images/streamlit-scd-clean.png" alt="Streamlit Filters">
+            </a>
+            <a href="assets/images/streamlit-scd-clean.png" class="lightbox-thumb" data-caption="SCD Type 2 History Explorer — select any dimension (Customer, Product, Geography, Sales Territory) to view version history and validity periods">
+              <img src="assets/images/streamlit-scd-clean.png" alt="Streamlit SCD Explorer">
+            </a>
+          </div>
+          <a href="https://KLDJZPG-RTB48613.snowflakecomputing.app/streamlit-apps/ADVENTUREWORKS_MIGRATED.UTILITY.ADVENTUREWORKS_DASHBOARD" target="_blank" rel="noopener" class="dash-live-link">&#10052; Open in Snowflake (SiS) &rarr;</a>
+          <div class="screenshot-caption">Screenshots from the Snowflake SiS deployment with live migrated data. Click any thumbnail to view full-size.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARTIFACTS GALLERY -->
+  <section class="section" id="artifacts">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2 class="section-title">Artifacts Gallery</h2>
+        <p class="section-desc">Snippets from the generated notebooks, SQL, and deployment artifacts.</p>
+      </div>
+      <div class="gallery">
+        <div class="gallery-card">
+          <div class="gallery-header">
+            <span class="gallery-tag">Snowpark Notebook</span>
+            <span class="gallery-name">SCD Type 2 MERGE</span>
+          </div>
+          <pre class="gallery-code"><code><span class="kw">def</span> <span class="fn">apply_scd_type2</span>(mapping: <span class="kw">dict</span>) -> <span class="kw">dict</span>:
+    source_table = mapping[<span class="lit">'source_table'</span>]
+    target_table = mapping[<span class="lit">'target_table'</span>]
+    key_col = mapping[<span class="lit">'business_key'</span>]
+    payload = mapping[<span class="lit">'payload_columns'</span>]
+
+    src_hash = hash_expr(<span class="lit">'s'</span>, payload)
+    tgt_hash = hash_expr(<span class="lit">'t'</span>, payload)
+
+    <span class="cmt"># Detect NEW or CHANGED rows via SHA-256 comparison</span>
+    create_delta_sql = <span class="lit">f"""CREATE OR REPLACE TEMP TABLE {delta_fqn} AS ..."""</span>
+
+    <span class="cmt"># Close old current versions</span>
+    update_sql = <span class="lit">f"""UPDATE {target_fqn} SET _valid_to = CURRENT_TIMESTAMP(), _is_current = FALSE ..."""</span>
+
+    <span class="cmt"># Insert new current versions</span>
+    insert_sql = <span class="lit">f"""INSERT INTO {target_fqn} ({insert_columns}) ..."""</span>
+
+    session.sql(create_delta_sql).collect()
+    session.sql(update_sql).collect()
+    session.sql(insert_sql).collect()
+
+    <span class="kw">return</span> { <span class="lit">'source_table'</span>: source_table, <span class="lit">'target_table'</span>: target_table, **delta_metrics }</code></pre>
+        </div>
+        <div class="gallery-card">
+          <div class="gallery-header">
+            <span class="gallery-tag">Snowflake SQL</span>
+            <span class="gallery-name">Validation Row Counts</span>
+          </div>
+          <pre class="gallery-code"><code><span class="kw">SELECT</span>
+  <span class="lit">'STAGING_PARITY'</span> <span class="kw">AS</span> scope,
+  table_name,
+  source_row_count,
+  target_row_count,
+  <span class="fn">ABS</span>(source_row_count - target_row_count) <span class="kw">AS</span> diff,
+  <span class="kw">CASE</span> <span class="kw">WHEN</span> source_row_count = target_row_count
+       <span class="kw">THEN</span> <span class="lit">'PASS'</span> <span class="kw">ELSE</span> <span class="lit">'FAIL'</span> <span class="kw">END</span> <span class="kw">AS</span> status
+<span class="kw">FROM</span> validation_row_counts
+<span class="kw">ORDER BY</span> table_name;</code></pre>
+        </div>
+        <div class="gallery-card">
+          <div class="gallery-header">
+            <span class="gallery-tag">Snowflake SiS</span>
+            <span class="gallery-name">Deployed Notebooks</span>
+          </div>
+          <div class="gallery-notebook-links">
+            <a href="https://app.snowflake.com" target="_blank" rel="noopener" class="nb-link">
+              <span class="nb-icon">&#128218;</span>
+              <div class="nb-info">
+                <span class="nb-name">NOTEBOOK_SCD_TYPE2</span>
+                <span class="nb-desc">MERGE logic for SCD Type 2 dimensions</span>
+              </div>
+            </a>
+            <a href="https://app.snowflake.com" target="_blank" rel="noopener" class="nb-link">
+              <span class="nb-icon">&#128218;</span>
+              <div class="nb-info">
+                <span class="nb-name">NOTEBOOK_DATA_QUALITY</span>
+                <span class="nb-desc">Row count, null, duplicate checks</span>
+              </div>
+            </a>
+            <a href="https://app.snowflake.com" target="_blank" rel="noopener" class="nb-link">
+              <span class="nb-icon">&#128218;</span>
+              <div class="nb-info">
+                <span class="nb-name">NOTEBOOK_LOAD_STAGING</span>
+                <span class="nb-desc">COPY INTO workflows for staging</span>
+              </div>
+            </a>
+            <div class="nb-meta">Deployed to ADVENTUREWORKS_MIGRATED.UTILITY via CREATE NOTEBOOK FROM @stage</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION EXECUTION -->
+  <section class="section section-dark" id="execution">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2 class="section-title">Mission Execution Notes</h2>
+        <p class="section-desc">How the mission ran, how it was validated, and what made it different.</p>
+      </div>
+      <div class="exec-grid">
+        <div class="exec-left">
+          <div class="exec-card">
+            <h4>One-Shot Mission</h4>
+            <p>This was a <strong>single Droid mission</strong> that ran end-to-end in approximately <strong>7 hours</strong>. It was not split across sessions. Every phase generated artifacts, was validated by automated reviewers, and had to pass before proceeding.</p>
+          </div>
+          <div class="exec-card">
+            <h4>Upfront Validation Contracts</h4>
+            <p>Before any code was written, the mission generated <code>features.json</code> and <code>validation-contract.md</code> with <strong>40 predefined assertions</strong>. Each feature had a <code>fulfills</code> array binding it to specific VAL-xxx contracts. Validation was built into the mission structure, not an afterthought.</p>
+          </div>
+          <div class="exec-card">
+            <h4>Scrutiny &amp; User-Testing Validators</h4>
+            <p>After every feature, the orchestrator spawned two validators:</p>
+            <ul>
+              <li><strong>scrutiny-validator</strong> &mdash; automated code review (tests, type checks, linting)</li>
+              <li><strong>user-testing-flow-validator</strong> &mdash; contract-surface verification</li>
+            </ul>
+            <p>When validators <strong>rejected</strong> outputs, the mission received pushback and had to fix issues before the milestone was sealed. This happened multiple times across the 7 milestones.</p>
+          </div>
+          <div class="exec-card">
+            <h4>Sealed Milestones</h4>
+            <p>Each of the 7 milestones was <strong>sealed</strong> only after both its feature artifacts and its validators returned PASS. No milestone could be skipped or short-circuited.</p>
+          </div>
+        </div>
+        <div class="exec-right">
+          <div class="exec-timeline-img">
+            <img src="assets/images/snowflake_migration_timeline.png" alt="Snowflake Migration Timeline" class="timeline-img">
+            <div class="timeline-caption">Snowflake migration timeline generated during the mission</div>
+          </div>
+          <div class="exec-meta">
+            <div class="meta-row">
+              <span class="meta-label">Mission Type</span>
+              <span class="meta-value">Factory Mission (Part 2)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Total Runtime</span>
+              <span class="meta-value">~7 hours</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Milestones</span>
+              <span class="meta-value">7 sealed</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Validators</span>
+              <span class="meta-value">14 invocations</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Features</span>
+              <span class="meta-value">11 completed</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Assertions</span>
+              <span class="meta-value">39/39 passed</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Pushbacks</span>
+              <span class="meta-value">Multiple (scrutiny + user-testing)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Deployment</span>
+              <span class="meta-value">Live Snowflake account</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK & DELIVERABLES -->
+  <section class="section" id="tech">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2 class="section-title">Tech Stack &amp; Deliverables</h2>
+        <p class="section-desc">Everything that was built, generated, and packaged.</p>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-col">
+          <h4 class="tech-heading">Source</h4>
+          <div class="tech-tag">SQL Server 2022 (Docker)</div>
+          <div class="tech-tag">AdventureWorksDW2022</div>
+          <div class="tech-tag">SSIS / T-SQL ETL</div>
+          <div class="tech-tag">Power BI (.pbix)</div>
+          <h4 class="tech-heading">Target</h4>
+          <div class="tech-tag">Snowflake</div>
+          <div class="tech-tag">Snowpark Python</div>
+          <div class="tech-tag">Dynamic Tables</div>
+          <div class="tech-tag">Tasks &amp; Streams</div>
+          <h4 class="tech-heading">Languages</h4>
+          <div class="tech-tag">Python 3.14.4</div>
+          <div class="tech-tag">SQL (Snowflake dialect)</div>
+          <div class="tech-tag">T-SQL (source parsing)</div>
+        </div>
+        <div class="tech-col">
+          <h4 class="tech-heading">Key Libraries</h4>
+          <div class="tech-tag">snowflake-connector-python 4.4.0</div>
+          <div class="tech-tag">pymssql 2.3.13</div>
+          <div class="tech-tag">streamlit 1.57.0</div>
+          <div class="tech-tag">pandas 3.0.2</div>
+          <div class="tech-tag">plotly 6.7.0</div>
+          <div class="tech-tag">pyarrow 24.0.0</div>
+          <div class="tech-tag">jupyter 1.1.1</div>
+          <h4 class="tech-heading">Deployment</h4>
+          <div class="tech-tag">deploy.sh (ordered SQL)</div>
+          <div class="tech-tag">Makefile</div>
+          <div class="tech-tag">Dockerfile (Streamlit)</div>
+        </div>
+        <div class="tech-col wide">
+          <h4 class="tech-heading">Generated Deliverables</h4>
+          <div class="deliverable-list">
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128196;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">01-assessment-report.md</span>
+                <span class="deliverable-desc">Source inventory, complexity scoring, risk analysis</span>
+              </div>
+            </div>
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128196;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">02-target-architecture.md</span>
+                <span class="deliverable-desc">Schema layout, type mappings, architecture diagrams</span>
+              </div>
+            </div>
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128459;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">snowflake-artifacts/*.sql</span>
+                <span class="deliverable-desc">5 DDL scripts, validation SQL, UDFs, tasks</span>
+              </div>
+            </div>
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128218;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">snowflake-artifacts/*.ipynb</span>
+                <span class="deliverable-desc">3 Snowpark notebooks: SCD2, data quality, staging load</span>
+              </div>
+            </div>
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128230;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">03-data-migration-scripts/</span>
+                <span class="deliverable-desc">extract_data.py, load_staging.sql, load_dw.sql</span>
+              </div>
+            </div>
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128200;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">04-dashboard-migration/</span>
+                <span class="deliverable-desc">Repoint guide, Streamlit app, comparison report</span>
+              </div>
+            </div>
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128203;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">05-validation-report.md</span>
+                <span class="deliverable-desc">Pass/fail validation across all 6 layers</span>
+              </div>
+            </div>
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128295;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">deploy.sh + deployment-guide.md</span>
+                <span class="deliverable-desc">Automated deployment and human-readable instructions</span>
+              </div>
+            </div>
+            <div class="deliverable">
+              <span class="deliverable-icon">&#128230;</span>
+              <div class="deliverable-info">
+                <span class="deliverable-name">adventureworks-snowflake-deliverable.zip</span>
+                <span class="deliverable-desc">Packaged deliverable (941 KB)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <span class="footer-mark">&#10022;</span> FACTORY
+        <span class="footer-divider">|</span>
+        AdventureWorks &rarr; Snowflake Migration Mission
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/dmytro-factory/exp-snow-migration" target="_blank" rel="noopener">GitHub</a>
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to Top</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

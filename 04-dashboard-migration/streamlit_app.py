@@ -43,6 +43,18 @@ def get_setting(name: str, default: str | None = None) -> str | None:
 
 @st.cache_resource(show_spinner=False)
 def get_connection() -> snowflake.connector.SnowflakeConnection:
+    # In Snowflake SiS we can use the existing snowpark session directly.
+    try:
+        from snowflake.snowpark.context import get_active_session
+
+        session = get_active_session()
+        # Return the underlying SnowflakeConnection so the rest of the
+        # app (cursor-based code) works unchanged.
+        return session.connection  # type: ignore[return-value]
+    except Exception:
+        pass
+
+    # Fallback for local development / non-SiS environments.
     load_env_file()
     account = get_setting("SNOWFLAKE_ACCOUNT")
     user = get_setting("SNOWFLAKE_USER")
