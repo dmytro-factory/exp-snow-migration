@@ -470,6 +470,20 @@ a:hover { opacity: 0.8; }
 .footer-right a { font-size: 13px; color: var(--fg-muted); transition: color 0.2s; }
 .footer-right a:hover { color: var(--fg); }
 
+.footer-sdlc {
+  max-width: 1100px; margin: 20px auto 0;
+  border-top: 1px solid var(--line); padding-top: 20px;
+}
+.footer-sdlc p {
+  font-size: 13px; color: var(--fg); line-height: 1.8; max-width: 900px;
+}
+.footer-sdlc strong { color: var(--accent); font-weight: 600; }
+.footer-sdlc a {
+  color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(255,107,53,0.3);
+  transition: border-color 0.2s;
+}
+.footer-sdlc a:hover { border-color: var(--accent); }
+
 .reveal {
   opacity: 0;
   transform: translateY(20px);
