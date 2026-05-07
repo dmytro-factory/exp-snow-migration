@@ -95,8 +95,8 @@ a:hover { opacity: 0.8; }
 }
 .hero-title .accent { color: var(--accent); }
 .hero-subtitle {
-  font-size: clamp(16px, 2vw, 20px); color: var(--fg-muted);
-  max-width: 680px; margin: 0 auto 48px; line-height: 1.6;
+  font-size: clamp(15px, 1.8vw, 18px); color: var(--fg-muted);
+  max-width: 780px; margin: 0 auto 48px; line-height: 1.7;
   opacity: 0; animation: fadeInUp 0.7s ease both; animation-delay: 0.2s;
 }
 .hero-stats {
