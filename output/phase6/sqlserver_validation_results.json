@@ -1,0 +1,518 @@
+{
+  "row_counts": [
+    {
+      "source_table": "dbo.AdventureWorksDWBuildVersion",
+      "expected_count": 1,
+      "actual_count": 1,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DatabaseLog",
+      "expected_count": 96,
+      "actual_count": 96,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimAccount",
+      "expected_count": 99,
+      "actual_count": 99,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimCurrency",
+      "expected_count": 105,
+      "actual_count": 105,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimCustomer",
+      "expected_count": 18484,
+      "actual_count": 18484,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimDate",
+      "expected_count": 3652,
+      "actual_count": 3652,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimDepartmentGroup",
+      "expected_count": 7,
+      "actual_count": 7,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimEmployee",
+      "expected_count": 296,
+      "actual_count": 296,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimGeography",
+      "expected_count": 655,
+      "actual_count": 655,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimOrganization",
+      "expected_count": 14,
+      "actual_count": 14,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimProduct",
+      "expected_count": 606,
+      "actual_count": 606,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimProductCategory",
+      "expected_count": 4,
+      "actual_count": 4,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimProductSubcategory",
+      "expected_count": 37,
+      "actual_count": 37,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimPromotion",
+      "expected_count": 16,
+      "actual_count": 16,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimReseller",
+      "expected_count": 701,
+      "actual_count": 701,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimSalesReason",
+      "expected_count": 10,
+      "actual_count": 10,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimSalesTerritory",
+      "expected_count": 11,
+      "actual_count": 11,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimScenario",
+      "expected_count": 3,
+      "actual_count": 3,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactAdditionalInternationalProductDescription",
+      "expected_count": 15168,
+      "actual_count": 15168,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactCallCenter",
+      "expected_count": 120,
+      "actual_count": 120,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactCurrencyRate",
+      "expected_count": 14264,
+      "actual_count": 14264,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactFinance",
+      "expected_count": 39409,
+      "actual_count": 39409,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactInternetSales",
+      "expected_count": 60398,
+      "actual_count": 60398,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactInternetSalesReason",
+      "expected_count": 64515,
+      "actual_count": 64515,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactProductInventory",
+      "expected_count": 776286,
+      "actual_count": 776286,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactResellerSales",
+      "expected_count": 60855,
+      "actual_count": 60855,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactSalesQuota",
+      "expected_count": 163,
+      "actual_count": 163,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactSurveyResponse",
+      "expected_count": 2727,
+      "actual_count": 2727,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.NewFactCurrencyRate",
+      "expected_count": 50,
+      "actual_count": 50,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.ProspectiveBuyer",
+      "expected_count": 2059,
+      "actual_count": 2059,
+      "difference": 0,
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.sysdiagrams",
+      "expected_count": 9,
+      "actual_count": 9,
+      "difference": 0,
+      "status": "PASS"
+    }
+  ],
+  "checksums": [
+    {
+      "source_table": "dbo.AdventureWorksDWBuildVersion",
+      "key_columns": [
+        "DBVersion"
+      ],
+      "expected_checksum": "15130868455584384691",
+      "actual_checksum": "15130868455584384691",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DatabaseLog",
+      "key_columns": [
+        "DatabaseLogID"
+      ],
+      "expected_checksum": "14625139125088316693",
+      "actual_checksum": "14625139125088316693",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimAccount",
+      "key_columns": [
+        "AccountKey"
+      ],
+      "expected_checksum": "2137465620343828945",
+      "actual_checksum": "2137465620343828945",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimCurrency",
+      "key_columns": [
+        "CurrencyKey"
+      ],
+      "expected_checksum": "18333034755920252889",
+      "actual_checksum": "18333034755920252889",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimCustomer",
+      "key_columns": [
+        "CustomerKey"
+      ],
+      "expected_checksum": "7100330461688071132",
+      "actual_checksum": "7100330461688071132",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimDate",
+      "key_columns": [
+        "DateKey"
+      ],
+      "expected_checksum": "12111192836113270909",
+      "actual_checksum": "12111192836113270909",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimDepartmentGroup",
+      "key_columns": [
+        "DepartmentGroupKey"
+      ],
+      "expected_checksum": "12437988593863386734",
+      "actual_checksum": "12437988593863386734",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimEmployee",
+      "key_columns": [
+        "EmployeeKey"
+      ],
+      "expected_checksum": "17134194261253827694",
+      "actual_checksum": "17134194261253827694",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimGeography",
+      "key_columns": [
+        "GeographyKey"
+      ],
+      "expected_checksum": "15894152510059666754",
+      "actual_checksum": "15894152510059666754",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimOrganization",
+      "key_columns": [
+        "OrganizationKey"
+      ],
+      "expected_checksum": "2817283297105040822",
+      "actual_checksum": "2817283297105040822",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimProduct",
+      "key_columns": [
+        "ProductKey"
+      ],
+      "expected_checksum": "11006649797649818277",
+      "actual_checksum": "11006649797649818277",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimProductCategory",
+      "key_columns": [
+        "ProductCategoryKey"
+      ],
+      "expected_checksum": "2464722156703325440",
+      "actual_checksum": "2464722156703325440",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimProductSubcategory",
+      "key_columns": [
+        "ProductSubcategoryKey"
+      ],
+      "expected_checksum": "2265698762072386517",
+      "actual_checksum": "2265698762072386517",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimPromotion",
+      "key_columns": [
+        "PromotionKey"
+      ],
+      "expected_checksum": "9969197623873572510",
+      "actual_checksum": "9969197623873572510",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimReseller",
+      "key_columns": [
+        "ResellerKey"
+      ],
+      "expected_checksum": "6392975313467063810",
+      "actual_checksum": "6392975313467063810",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimSalesReason",
+      "key_columns": [
+        "SalesReasonKey"
+      ],
+      "expected_checksum": "10388509692212073493",
+      "actual_checksum": "10388509692212073493",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimSalesTerritory",
+      "key_columns": [
+        "SalesTerritoryKey"
+      ],
+      "expected_checksum": "17671601338737982197",
+      "actual_checksum": "17671601338737982197",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.DimScenario",
+      "key_columns": [
+        "ScenarioKey"
+      ],
+      "expected_checksum": "8769772107713361379",
+      "actual_checksum": "8769772107713361379",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactAdditionalInternationalProductDescription",
+      "key_columns": [
+        "ProductKey",
+        "CultureName"
+      ],
+      "expected_checksum": "16461074059774242885",
+      "actual_checksum": "16461074059774242885",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactCallCenter",
+      "key_columns": [
+        "FactCallCenterID"
+      ],
+      "expected_checksum": "11150490344538646158",
+      "actual_checksum": "11150490344538646158",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactCurrencyRate",
+      "key_columns": [
+        "CurrencyKey",
+        "DateKey"
+      ],
+      "expected_checksum": "833276882417436233",
+      "actual_checksum": "833276882417436233",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactFinance",
+      "key_columns": [
+        "FinanceKey"
+      ],
+      "expected_checksum": "12771533961287541228",
+      "actual_checksum": "12771533961287541228",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactInternetSales",
+      "key_columns": [
+        "SalesOrderNumber",
+        "SalesOrderLineNumber"
+      ],
+      "expected_checksum": "11985977886526112248",
+      "actual_checksum": "11985977886526112248",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactInternetSalesReason",
+      "key_columns": [
+        "SalesOrderNumber",
+        "SalesOrderLineNumber",
+        "SalesReasonKey"
+      ],
+      "expected_checksum": "14851711497136723404",
+      "actual_checksum": "14851711497136723404",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactProductInventory",
+      "key_columns": [
+        "ProductKey",
+        "DateKey"
+      ],
+      "expected_checksum": "17821564523411364822",
+      "actual_checksum": "17821564523411364822",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactResellerSales",
+      "key_columns": [
+        "SalesOrderNumber",
+        "SalesOrderLineNumber"
+      ],
+      "expected_checksum": "3902369256371288272",
+      "actual_checksum": "3902369256371288272",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactSalesQuota",
+      "key_columns": [
+        "SalesQuotaKey"
+      ],
+      "expected_checksum": "9290006239127381231",
+      "actual_checksum": "9290006239127381231",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.FactSurveyResponse",
+      "key_columns": [
+        "SurveyResponseKey"
+      ],
+      "expected_checksum": "12160041614454391942",
+      "actual_checksum": "12160041614454391942",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.NewFactCurrencyRate",
+      "key_columns": [
+        "CurrencyKey",
+        "DateKey"
+      ],
+      "expected_checksum": "2386386360877452238",
+      "actual_checksum": "2386386360877452238",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.ProspectiveBuyer",
+      "key_columns": [
+        "ProspectiveBuyerKey"
+      ],
+      "expected_checksum": "9191594562154385690",
+      "actual_checksum": "9191594562154385690",
+      "status": "PASS"
+    },
+    {
+      "source_table": "dbo.sysdiagrams",
+      "key_columns": [
+        "diagram_id"
+      ],
+      "expected_checksum": "78393145109691803",
+      "actual_checksum": "78393145109691803",
+      "status": "PASS"
+    }
+  ],
+  "summary": {
+    "row_count_tables_checked": 31,
+    "row_count_failures": 0,
+    "row_count_status": "PASS",
+    "checksum_tables_checked": 31,
+    "checksum_failures": 0,
+    "checksum_status": "PASS"
+  }
+}
