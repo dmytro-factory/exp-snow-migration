@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Factory-styled AdventureWorks dashboard backed by Snowflake."""
+"""Factory-styled AdventureWorks dashboard backed by Snowflake.
+
+Uses only streamlit native charts + pandas to avoid external chart
+dependency issues in Streamlit in Snowflake runtime.
+"""
 
 from __future__ import annotations
 
@@ -7,7 +11,6 @@ import os
 from pathlib import Path
 
 import pandas as pd
-import plotly.express as px
 import snowflake.connector
 import streamlit as st
 
@@ -43,18 +46,14 @@ def get_setting(name: str, default: str | None = None) -> str | None:
 
 @st.cache_resource(show_spinner=False)
 def get_connection() -> snowflake.connector.SnowflakeConnection:
-    # In Snowflake SiS we can use the existing snowpark session directly.
     try:
         from snowflake.snowpark.context import get_active_session
 
         session = get_active_session()
-        # Return the underlying SnowflakeConnection so the rest of the
-        # app (cursor-based code) works unchanged.
-        return session.connection  # type: ignore[return-value]
+        return session.connection
     except Exception:
         pass
 
-    # Fallback for local development / non-SiS environments.
     load_env_file()
     account = get_setting("SNOWFLAKE_ACCOUNT")
     user = get_setting("SNOWFLAKE_USER")
@@ -275,23 +274,10 @@ def render_dashboard() -> None:
         .agg(sales_amount=("sales_amount", "sum"), total_product_cost=("total_product_cost", "sum"))
     )
     trend_df["total_profit"] = trend_df["sales_amount"] - trend_df["total_product_cost"]
-    trend_df = trend_df.drop(columns=["total_product_cost"])
+    trend_plot = trend_df.set_index("month")[["sales_amount", "total_profit"]]
 
-    trend_fig = px.line(
-        trend_df,
-        x="month",
-        y=["sales_amount", "total_profit"],
-        labels={"value": "USD", "month": "Month", "variable": "Metric"},
-        color_discrete_sequence=[ORANGE, "#54D1DB"],
-        template="plotly_dark",
-    )
-    trend_fig.update_layout(
-        paper_bgcolor=BG,
-        plot_bgcolor=BG,
-        legend_title_text="",
-    )
     st.subheader("Sales Trend (Time Series)")
-    st.plotly_chart(trend_fig, width="stretch")
+    st.line_chart(trend_plot)
 
     left, right = st.columns(2)
     top_products = (
@@ -299,53 +285,29 @@ def render_dashboard() -> None:
         .sum()
         .sort_values("sales_amount", ascending=False)
         .head(10)
+        .set_index("product_name")
     )
-    product_fig = px.bar(
-        top_products.sort_values("sales_amount"),
-        x="sales_amount",
-        y="product_name",
-        orientation="h",
-        template="plotly_dark",
-        color_discrete_sequence=[ORANGE],
-        labels={"sales_amount": "Sales (USD)", "product_name": "Product"},
-    )
-    product_fig.update_layout(paper_bgcolor=BG, plot_bgcolor=BG, showlegend=False)
     left.subheader("Top Products")
-    left.plotly_chart(product_fig, width="stretch")
+    left.bar_chart(top_products)
 
-    geo_df = filtered_df.groupby("country", as_index=False)["sales_amount"].sum()
-    map_fig = px.choropleth(
-        geo_df,
-        locations="country",
-        locationmode="country names",
-        color="sales_amount",
-        color_continuous_scale=["#1A1A1A", ORANGE],
-        template="plotly_dark",
+    geo_df = (
+        filtered_df.groupby("country", as_index=False)["sales_amount"]
+        .sum()
+        .sort_values("sales_amount", ascending=False)
+        .set_index("country")
     )
-    map_fig.update_layout(
-        paper_bgcolor=BG,
-        geo=dict(bgcolor=BG, showframe=False, showcoastlines=True, coastlinecolor="#404040"),
-    )
-    right.subheader("Geographic Sales Map")
-    right.plotly_chart(map_fig, width="stretch")
+    right.subheader("Sales by Country")
+    right.bar_chart(geo_df)
 
     seg_col, info_col = st.columns([2, 1])
     segment_df = (
         filtered_df.groupby("customer_segment", as_index=False)["sales_amount"]
         .sum()
         .sort_values("sales_amount", ascending=False)
+        .set_index("customer_segment")
     )
-    pie_fig = px.pie(
-        segment_df,
-        names="customer_segment",
-        values="sales_amount",
-        hole=0.45,
-        template="plotly_dark",
-        color_discrete_sequence=px.colors.sequential.Oranges,
-    )
-    pie_fig.update_layout(paper_bgcolor=BG, plot_bgcolor=BG)
     seg_col.subheader("Customer Segment Mix")
-    seg_col.plotly_chart(pie_fig, width="stretch")
+    seg_col.bar_chart(segment_df)
 
     info_col.subheader("Active Filter Scope")
     info_col.markdown(
@@ -383,33 +345,15 @@ def render_dashboard() -> None:
     selected_label = st.selectbox("Business key", options=option_labels)
     selected_key = selected_label.split(" — ", 1)[0]
 
-    history = scd_df[scd_df["business_key"] == selected_key].sort_values("_valid_from")
-    timeline = history.copy()
-    timeline["valid_to_display"] = timeline["_valid_to"].fillna(pd.Timestamp.now())
-    timeline["version"] = [f"Version {idx + 1}" for idx in range(len(timeline))]
-    timeline_fig = px.timeline(
-        timeline,
-        x_start="_valid_from",
-        x_end="valid_to_display",
-        y="version",
-        color="_is_current",
-        color_discrete_map={True: ORANGE, False: "#666666"},
-        template="plotly_dark",
-    )
-    timeline_fig.update_layout(
-        paper_bgcolor=BG,
-        plot_bgcolor=BG,
-        showlegend=True,
-        legend_title_text="Current version",
-    )
-    st.plotly_chart(timeline_fig, width="stretch")
-    st.dataframe(history, width="stretch", hide_index=True)
+    history = scd_df[scd_df["business_key"] == selected_key].sort_values("_valid_from").reset_index(drop=True)
+    history["version"] = [f"v{i+1}" for i in range(len(history))]
+    st.dataframe(history, use_container_width=True)
 
 
 def main() -> None:
     try:
         render_dashboard()
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:
         st.error(f"Dashboard failed to load: {exc}")
         st.exception(exc)
 

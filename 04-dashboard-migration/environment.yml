@@ -1,0 +1,6 @@
+name: sf_env
+channels:
+  - snowflake
+dependencies:
+  - python=3.10
+  - pandas=2.0.3
