@@ -1,6 +1,8 @@
 {
   "version": 2,
   "routes": [
+    { "src": "/mission-diagram-viewer", "dest": "/mission-diagram-viewer.html" },
+    { "src": "/mission-diagram-viewer.html", "dest": "/mission-diagram-viewer.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
