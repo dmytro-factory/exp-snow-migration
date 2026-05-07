@@ -791,21 +791,41 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <div class="footer-left">
-        <span class="footer-mark">&#10022;</span> FACTORY
-        <span class="footer-divider">|</span>
-        AdventureWorks &rarr; Snowflake Migration Mission
+  <!-- FOOTER / WHY DROIDS -->
+  <footer class="footer" id="footer">
+    <div class="container footer-hero">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-2.5 h-2.5 rounded-full bg-accent"></div>
+        <span class="font-mono text-xs uppercase text-accent tracking-wider">08 // Droids</span>
       </div>
-      <div class="footer-right">
-        <a href="https://github.com/dmytro-factory/exp-snow-migration" target="_blank" rel="noopener">GitHub</a>
-        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to Top</a>
+      <h2 class="footer-heading">Droids handle the full SDLC. <span class="text-accent">Not just greenfield.</span></h2>
+      <p class="footer-lead">Migrations are never just code conversion. Every one forces hard decisions about future-state architecture, preserving history, choosing between big-bang and incremental cutover, and scoping what to carry forward. But most of the effort is validation &mdash; proving row counts match, checksums agree, and dashboards show the same numbers. Droid missions automate the full journey <em>and</em> its validation.</p>
+    </div>
+    <div class="container footer-cards">
+      <div class="footer-card">
+        <div class="footer-card-tag">In-Context Learning</div>
+        <p class="footer-card-text">Droid reads and deeply analyses the full legacy source &mdash; comments, quirks, raw addresses, undocumented behavior &mdash; and builds a working model of intent before acting.</p>
+      </div>
+      <div class="footer-card">
+        <div class="footer-card-tag">Mission Decomposition</div>
+        <p class="footer-card-text">Complex goals like a data-warehouse migration are broken into ordered milestones with explicit entry criteria, exit criteria, and evidence requirements at each gate.</p>
+      </div>
+      <div class="footer-card">
+        <div class="footer-card-tag">Validation-Gated Execution</div>
+        <p class="footer-card-text">Each milestone produces a machine-readable receipt. Droid does not advance until validation passes &mdash; no soft skips, no placeholder status. Scrutiny and user-testing validators enforce quality.</p>
       </div>
     </div>
-    <div class="container footer-sdlc">
-      <p><strong>Droids handle the full SDLC.</strong> Not just greenfield prototypes &mdash; they modernize existing brownfield codebases, too. This mission is an example: a real Microsoft stack (SQL Server + SSIS + Power BI) moved to Snowflake end-to-end, validated by automated scrutiny and user-testing agents. Verification is not a afterthought; it's the most important part of the system. Think in <a href="https://docs.factory.ai/missions" target="_blank" rel="noopener">missions</a>, not single agents.</p>
+    <div class="container footer-wide-card">
+      <div class="footer-card-tag">What this mission demonstrates</div>
+      <p class="footer-card-text">A Droid mission ran end-to-end: it read legacy SQL Server schemas and SSIS packages, extracted data via Parquet, designed Snowflake-native SCD Type 2 dimensions, deployed managed notebooks and a Streamlit dashboard, then ran row-count, checksum, and screenshot validations to close each gate. All 39 assertions passed. No human wrote the migrated SQL or the validation harness.</p>
+    </div>
+    <div class="container footer-bar">
+      <div class="footer-bar-left">
+        <span class="footer-mark">&#10022;</span> FACTORY <span class="footer-divider">//</span> DROID
+      </div>
+      <div class="footer-bar-right">
+        <a href="https://github.com/dmytro-factory/exp-snow-migration" target="_blank" rel="noopener">exp-snow-migration &nearr;</a>
+      </div>
     </div>
   </footer>
 
